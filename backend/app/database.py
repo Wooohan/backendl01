@@ -102,6 +102,19 @@ CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 
 CREATE INDEX IF NOT EXISTS idx_blocked_ips_ip ON blocked_ips(ip_address);
 
+-- ── Active Insurance table ────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS active_insurance (
+    prefix_docket_number VARCHAR(10),
+    ins_type_code VARCHAR(2),
+    ins_class_code VARCHAR(2),
+    max_cov_amount VARCHAR(6),
+    underl_lim_amount VARCHAR(6),
+    policy_no VARCHAR(30),
+    effective_date VARCHAR(12),
+    ins_form_code VARCHAR(4),
+    name_company VARCHAR(50)
+);
+
 CREATE INDEX IF NOT EXISTS idx_active_insurance_docket ON active_insurance(prefix_docket_number);
 
 -- ── Timestamp triggers ──────────────────────────────────────────────────────
