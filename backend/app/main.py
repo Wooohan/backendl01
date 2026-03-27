@@ -31,7 +31,7 @@ from app.database import (
     get_fmcsa_extracted_dates, get_fmcsa_categories, delete_fmcsa_entries_before_date,
     save_new_venture_entries, fetch_new_ventures, fetch_new_venture_by_id,
     get_new_venture_count, get_new_venture_scraped_dates, delete_new_venture,
-    fetch_active_insurance,
+    fetch_insurance_history,
 )
 @asynccontextmanager
 async def lifespan(application: FastAPI):
@@ -321,6 +321,9 @@ async def api_fetch_carriers(
     bipd_on_file: str = Query(None),
     cargo_on_file: str = Query(None),
     bond_on_file: str = Query(None),
+    trust_fund_on_file: str = Query(None),
+    ins_cancellation_date_from: str = Query(None),
+    ins_cancellation_date_to: str = Query(None),
     years_in_business_min: str = Query(None),
     years_in_business_max: str = Query(None),
     oos_min: str = Query(None),
@@ -364,6 +367,9 @@ async def api_fetch_carriers(
     if bipd_on_file: filters["bipd_on_file"] = bipd_on_file
     if cargo_on_file: filters["cargo_on_file"] = cargo_on_file
     if bond_on_file: filters["bond_on_file"] = bond_on_file
+    if trust_fund_on_file: filters["trust_fund_on_file"] = trust_fund_on_file
+    if ins_cancellation_date_from: filters["ins_cancellation_date_from"] = ins_cancellation_date_from
+    if ins_cancellation_date_to: filters["ins_cancellation_date_to"] = ins_cancellation_date_to
     if years_in_business_min: filters["years_in_business_min"] = years_in_business_min
     if years_in_business_max: filters["years_in_business_max"] = years_in_business_max
     if oos_min: filters["oos_min"] = oos_min
@@ -762,7 +768,7 @@ async def api_delete_new_venture(record_id: str, request: Request):
     if ok:
         return {"success": True}
     return JSONResponse(status_code=404, content={"success": False, "error": "Record not found"})
-@app.get("/api/carriers/{mc_number}/active-insurance")
-async def api_get_active_insurance(mc_number: str):
-    policies = await fetch_active_insurance(mc_number)
+@app.get("/api/carriers/{mc_number}/insurance-history")
+async def api_get_insurance_history(mc_number: str):
+    policies = await fetch_insurance_history(mc_number)
     return {"success": True, "mc_number": mc_number, "policies": policies, "count": len(policies)}
